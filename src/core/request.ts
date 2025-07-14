@@ -98,6 +98,25 @@ export class Request {
     process.nextTick(() => this.error$.next(error));
     throw error;
   }
+  public async ensureSessionCookieFromWeb(): Promise<void> {
+  await this.send({
+      method: 'GET',
+      uri: 'https://www.instagram.com/accounts/edit/',
+      headers: {
+        'User-Agent': this.client.state.appUserAgent,
+        'X-IG-App-ID': this.client.state.fbAnalyticsApplicationId,
+      },
+      jar: this.client.state.cookieJar,
+    });
+
+    const cookies = await this.client.state.cookieJar.getCookies('https://www.instagram.com');
+    const session = cookies.find(c => c.key === 'sessionid');
+    if (session) {
+      console.log('✅ sessionid capturado do domínio web:', session.value);
+    } else {
+      console.warn('⚠️ Ainda não foi possível capturar o sessionid no domínio www.instagram.com.');
+    }
+  }
 
   private updateState(response: IgResponse<any>) {
     const {
