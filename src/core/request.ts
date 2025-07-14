@@ -101,7 +101,7 @@ export class Request {
   public async ensureSessionCookieFromWeb(): Promise<void> {
   await this.send({
       method: 'GET',
-      uri: 'https://www.instagram.com/accounts/edit/',
+      url: 'https://www.instagram.com/accounts/edit/',
       headers: {
         'User-Agent': this.client.state.appUserAgent,
         'X-IG-App-ID': this.client.state.fbAnalyticsApplicationId,
