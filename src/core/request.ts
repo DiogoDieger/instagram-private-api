@@ -75,6 +75,19 @@ export class Request {
     );
     Request.requestDebug(`Requesting ${options.method} ${options.url || options.uri || '[could not find url]'}`);
     const response = await this.faultTolerantRequest(options);
+    const setCookies = response.headers['set-cookie'] || response.headers['Set-Cookie'];
+
+      if (setCookies && Array.isArray(setCookies)) {
+        const session = setCookies.find((cookie: string) => cookie.startsWith('sessionid='));
+        if (session) {
+          console.log('🔐 SESSION ID:', session.split(';')[0]); // exibe apenas sessionid=...
+        } else {
+          console.warn('⚠️ Nenhum sessionid presente nos cookies retornados.');
+        }
+
+        // Você pode também salvar em arquivo, se quiser:
+        // require('fs').writeFileSync('sessionid.txt', session.split(';')[0]);
+      }
     this.updateState(response);
     process.nextTick(() => this.end$.next());
     if (response.body.status === 'ok' || (onlyCheckHttpStatus && response.statusCode === 200)) {
