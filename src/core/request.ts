@@ -75,6 +75,7 @@ export class Request {
     );
     Request.requestDebug(`Requesting ${options.method} ${options.url || options.uri || '[could not find url]'}`);
     const response = await this.faultTolerantRequest(options);
+    console.log('📦 Response Headers:', response.headers);
     const setCookies = response.headers['set-cookie'] || response.headers['Set-Cookie'];
 
       if (setCookies && Array.isArray(setCookies)) {
